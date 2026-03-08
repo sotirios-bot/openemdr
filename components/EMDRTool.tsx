@@ -274,8 +274,6 @@ export default function EMDRTool() {
             <div
               className="absolute top-1/2 -translate-y-1/2 transition-none"
               style={{
-                left: `calc(${dotPercent}% * (1 - ${dotSizePx}px / 100%))`,
-                // Simpler: use left with padding compensation
                 left: `calc(${dotPercent * 0.88 + 6}%)`,
                 width: dotSizePx,
                 height: dotSizePx,
