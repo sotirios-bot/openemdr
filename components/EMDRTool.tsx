@@ -31,7 +31,7 @@ const PROTOCOLS = [
 function SudScale({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
     <div className="space-y-3">
-      <div className="flex justify-between text-xs text-white/40">
+      <div className="flex justify-between text-xs text-slate-400 dark:text-white/40">
         <span>0 — No distress</span>
         <span>10 — Extreme distress</span>
       </div>
@@ -43,7 +43,7 @@ function SudScale({ value, onChange }: { value: number; onChange: (v: number) =>
             className={`w-9 h-9 rounded-lg font-semibold text-sm transition-all ${
               value === i
                 ? 'bg-purple-600 text-white scale-110'
-                : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-white/5 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white'
             }`}
           >
             {i}
@@ -160,12 +160,12 @@ export default function EMDRTool() {
       <div className="max-w-2xl mx-auto space-y-8 py-10 px-4">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Set Up Your Session</h2>
-          <p className="text-white/50 text-sm">Follow the steps below to prepare for your EMDR session.</p>
+          <p className="text-slate-500 text-sm dark:text-white/50">Follow the steps below to prepare for your EMDR session.</p>
         </div>
 
         {/* Step 1 — Protocol */}
         <div className="glass-card rounded-2xl p-6 space-y-3">
-          <p className="text-purple-400 text-xs font-semibold uppercase tracking-widest">Step 1 — Choose a protocol</p>
+          <p className="text-purple-600 text-xs font-semibold uppercase tracking-widest dark:text-purple-400">Step 1 — Choose a protocol</p>
           <div className="flex flex-wrap gap-2">
             {PROTOCOLS.map((p) => (
               <button
@@ -174,7 +174,7 @@ export default function EMDRTool() {
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                   protocol === p
                     ? 'bg-purple-600 text-white'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white'
                 }`}
               >
                 {p}
@@ -185,8 +185,8 @@ export default function EMDRTool() {
 
         {/* Step 2 — Target */}
         <div className="glass-card rounded-2xl p-6 space-y-3">
-          <p className="text-purple-400 text-xs font-semibold uppercase tracking-widest">Step 2 — Describe your target</p>
-          <p className="text-white/50 text-sm">Briefly describe the memory, feeling, or event you want to work on.</p>
+          <p className="text-purple-600 text-xs font-semibold uppercase tracking-widest dark:text-purple-400">Step 2 — Describe your target</p>
+          <p className="text-slate-500 text-sm dark:text-white/50">Briefly describe the memory, feeling, or event you want to work on.</p>
           <textarea
             value={target}
             onChange={(e) => setTarget(e.target.value)}
@@ -198,14 +198,14 @@ export default function EMDRTool() {
 
         {/* Step 3 — SUD rating */}
         <div className="glass-card rounded-2xl p-6 space-y-4">
-          <p className="text-purple-400 text-xs font-semibold uppercase tracking-widest">Step 3 — Rate your current distress (SUD)</p>
-          <p className="text-white/50 text-sm">When you focus on this memory right now, how distressing is it? (0 = none, 10 = extreme)</p>
+          <p className="text-purple-600 text-xs font-semibold uppercase tracking-widest dark:text-purple-400">Step 3 — Rate your current distress (SUD)</p>
+          <p className="text-slate-500 text-sm dark:text-white/50">When you focus on this memory right now, how distressing is it? (0 = none, 10 = extreme)</p>
           <SudScale value={sudBefore} onChange={setSudBefore} />
         </div>
 
         {/* Step 4 — Speed */}
         <div className="glass-card rounded-2xl p-6 space-y-3">
-          <p className="text-purple-400 text-xs font-semibold uppercase tracking-widest">Step 4 — Choose eye movement speed</p>
+          <p className="text-purple-600 text-xs font-semibold uppercase tracking-widest dark:text-purple-400">Step 4 — Choose eye movement speed</p>
           <div className="flex gap-3">
             {(['slow', 'medium', 'fast'] as Speed[]).map((s) => (
               <button
@@ -214,7 +214,7 @@ export default function EMDRTool() {
                 className={`flex-1 py-2.5 rounded-xl font-medium text-sm capitalize transition-all ${
                   speed === s
                     ? 'bg-purple-600 text-white'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white'
                 }`}
               >
                 {s}
@@ -224,8 +224,8 @@ export default function EMDRTool() {
         </div>
 
         {/* Instructions */}
-        <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-5 space-y-2 text-sm text-white/70">
-          <p className="font-semibold text-white">Before you begin:</p>
+        <div className="bg-purple-50 border border-purple-200 rounded-2xl p-5 space-y-2 text-sm text-slate-600 dark:bg-purple-500/10 dark:border-purple-500/20 dark:text-white/70">
+          <p className="font-semibold text-slate-900 dark:text-white">Before you begin:</p>
           <ul className="space-y-1 list-disc list-inside">
             <li>Find a quiet, private place where you won't be interrupted.</li>
             <li>Hold the memory gently in mind while following the moving dot with your eyes.</li>
@@ -246,28 +246,27 @@ export default function EMDRTool() {
   }
 
   if (phase === 'active') {
-    const trackWidth = '100%'
     const dotSizePx = 52
     const dotPercent = dotX * 100
 
     return (
       <div className="flex flex-col items-center justify-between min-h-[calc(100vh-80px)] py-10 px-4">
         <div className="text-center space-y-1">
-          <p className="text-purple-400 font-semibold text-sm">
+          <p className="text-purple-600 font-semibold text-sm dark:text-purple-400">
             Set {currentSet} of {SETS_PER_SESSION}
           </p>
-          <p className="text-white/50 text-sm">Follow the dot with your eyes only — keep your head still</p>
+          <p className="text-slate-500 text-sm dark:text-white/50">Follow the dot with your eyes only — keep your head still</p>
         </div>
 
         {/* Dot track */}
         <div className="w-full max-w-4xl">
           <div
-            className="relative w-full bg-white/5 rounded-full overflow-hidden"
+            className="relative w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden"
             style={{ height: 100 }}
           >
             {/* Track line */}
             <div className="absolute inset-y-0 left-6 right-6 flex items-center">
-              <div className="w-full h-px bg-white/10" />
+              <div className="w-full h-px bg-slate-200 dark:bg-white/10" />
             </div>
 
             {/* Dot */}
@@ -289,7 +288,7 @@ export default function EMDRTool() {
 
         {/* Controls */}
         <div className="flex flex-col items-center gap-4">
-          <div className="text-4xl font-mono font-bold text-white/80">
+          <div className="text-4xl font-mono font-bold text-slate-700 dark:text-white/80">
             {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
           </div>
 
@@ -313,21 +312,21 @@ export default function EMDRTool() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 text-center space-y-8">
         <div className="glass-card rounded-3xl p-10 max-w-md w-full space-y-6">
-          <p className="text-purple-400 font-semibold text-sm uppercase tracking-widest">
+          <p className="text-purple-600 font-semibold text-sm uppercase tracking-widest dark:text-purple-400">
             Set {currentSet} complete
           </p>
           <h2 className="text-2xl font-bold">Take a breath</h2>
-          <p className="text-white/60 text-sm leading-relaxed">
+          <p className="text-slate-600 text-sm leading-relaxed dark:text-white/60">
             What came up for you? Notice any sensations, images, emotions, or thoughts. You don't need to do anything with them — just observe.
           </p>
-          <p className="text-white/40 text-sm">
+          <p className="text-slate-400 text-sm dark:text-white/40">
             Set {currentSet + 1} of {SETS_PER_SESSION} when you're ready.
           </p>
           <button onClick={startNextSet} className="btn-primary w-full flex items-center justify-center gap-2">
             Continue to Next Set
             <ChevronRight className="w-5 h-5" />
           </button>
-          <button onClick={resetAll} className="text-white/30 hover:text-white/60 text-sm transition-colors">
+          <button onClick={resetAll} className="text-slate-400 hover:text-slate-600 text-sm transition-colors dark:text-white/30 dark:hover:text-white/60">
             End session
           </button>
         </div>
@@ -340,12 +339,12 @@ export default function EMDRTool() {
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4">
         <div className="max-w-lg w-full space-y-6">
           <div className="text-center">
-            <p className="text-green-400 font-semibold text-sm uppercase tracking-widest mb-2">Session complete</p>
+            <p className="text-green-600 font-semibold text-sm uppercase tracking-widest mb-2 dark:text-green-400">Session complete</p>
             <h2 className="text-2xl font-bold">How do you feel now?</h2>
           </div>
 
           <div className="glass-card rounded-2xl p-6 space-y-4">
-            <p className="text-white/50 text-sm">
+            <p className="text-slate-500 text-sm dark:text-white/50">
               When you bring up that same memory now, how distressing is it? (0 = none, 10 = extreme)
             </p>
             <SudScale value={sudAfter} onChange={setSudAfter} />
@@ -370,42 +369,42 @@ export default function EMDRTool() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4">
         <div className="max-w-md w-full text-center space-y-6">
-          <div className="w-20 h-20 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto">
-            <CheckCircle className="w-10 h-10 text-purple-400" />
+          <div className="w-20 h-20 rounded-full bg-purple-50 border border-purple-200 flex items-center justify-center mx-auto dark:bg-purple-500/10 dark:border-purple-500/20">
+            <CheckCircle className="w-10 h-10 text-purple-600 dark:text-purple-400" />
           </div>
 
           <div>
             <h2 className="text-2xl font-bold mb-2">Session Complete</h2>
-            <p className="text-white/50 text-sm">{protocol}</p>
+            <p className="text-slate-500 text-sm dark:text-white/50">{protocol}</p>
           </div>
 
           <div className="glass-card rounded-2xl p-6 space-y-4">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-3xl font-black text-white">{sudBefore}</p>
-                <p className="text-white/40 text-xs mt-1">Before</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white">{sudBefore}</p>
+                <p className="text-slate-400 text-xs mt-1 dark:text-white/40">Before</p>
               </div>
               <div className="flex items-center justify-center">
-                <ChevronRight className="w-5 h-5 text-white/20" />
+                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-white/20" />
               </div>
               <div>
-                <p className={`text-3xl font-black ${improved ? 'text-green-400' : 'text-white'}`}>{sudAfter}</p>
-                <p className="text-white/40 text-xs mt-1">After</p>
+                <p className={`text-3xl font-black ${improved ? 'text-green-600 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>{sudAfter}</p>
+                <p className="text-slate-400 text-xs mt-1 dark:text-white/40">After</p>
               </div>
             </div>
 
             {improved ? (
-              <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-                <p className="text-green-400 font-semibold text-sm">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 dark:bg-green-500/10 dark:border-green-500/20">
+                <p className="text-green-600 font-semibold text-sm dark:text-green-400">
                   {diff >= 3 ? '🌟 Significant improvement' : '✓ Noticeable improvement'} — distress reduced by {diff} point{diff !== 1 ? 's' : ''}
                 </p>
-                <p className="text-white/50 text-xs mt-1">
+                <p className="text-slate-500 text-xs mt-1 dark:text-white/50">
                   That's real progress. Be gentle with yourself — healing takes time.
                 </p>
               </div>
             ) : (
-              <div className="bg-white/5 rounded-xl p-4">
-                <p className="text-white/60 text-sm">
+              <div className="bg-slate-50 rounded-xl p-4 dark:bg-white/5">
+                <p className="text-slate-600 text-sm dark:text-white/60">
                   Sometimes healing happens beneath the surface. Consider trying again tomorrow, or explore a different protocol.
                 </p>
               </div>
