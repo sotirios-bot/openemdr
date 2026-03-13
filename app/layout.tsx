@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning style={{ colorScheme: 'light' }}>
       <body className="bg-white min-h-screen antialiased">
         {/* Runs before React hydration — clears stale 'theme' key from old site,
             only applies dark if user explicitly chose it via new key */}
