@@ -15,7 +15,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      {/* Runs synchronously before first paint — only honors openemdr-theme key.
+          Stale theme=dark from the old site is completely ignored. */}
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            if (localStorage.getItem('openemdr-theme') === 'dark') {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
+          } catch(e) {}
+        ` }} />
+      </head>
       <body className="bg-white min-h-screen antialiased">
         {children}
         <ThemeToggle />
