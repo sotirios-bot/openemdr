@@ -16,11 +16,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* Runs synchronously before first paint — only honors openemdr-theme key.
-          Stale theme=dark from the old site is completely ignored. */}
-      <head>
+      <body className="bg-white min-h-screen antialiased">
+        {/* Runs before React hydration — clears stale 'theme' key from old site,
+            only applies dark if user explicitly chose it via new key */}
         <script dangerouslySetInnerHTML={{ __html: `
           try {
+            localStorage.removeItem('theme');
             if (localStorage.getItem('openemdr-theme') === 'dark') {
               document.documentElement.classList.add('dark');
             } else {
@@ -28,8 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }
           } catch(e) {}
         ` }} />
-      </head>
-      <body className="bg-white min-h-screen antialiased">
         {children}
         <ThemeToggle />
       </body>
