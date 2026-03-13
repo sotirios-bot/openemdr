@@ -3,10 +3,22 @@ import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request })
+  const { pathname } = request.nextUrl
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // If Supabase is not configured, allow access to public routes only
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+    if (pathname.startsWith('/dashboard') || pathname.startsWith('/checkout')) {
+      return NextResponse.redirect(new URL('/auth/login', request.url))
+    }
+    return response
+  }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() { return request.cookies.getAll() },
@@ -22,8 +34,6 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl
 
   // Protect dashboard — must be logged in
   if (pathname.startsWith('/dashboard')) {
