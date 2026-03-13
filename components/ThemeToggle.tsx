@@ -11,6 +11,10 @@ export default function ThemeToggle() {
     if (saved === 'dark') {
       document.documentElement.classList.add('dark')
       setDark(true)
+    } else {
+      // Ensure dark class is removed if not explicitly set
+      document.documentElement.classList.remove('dark')
+      setDark(false)
     }
   }, [])
 
