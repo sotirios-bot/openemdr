@@ -3,17 +3,19 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
+const STORAGE_KEY = 'openemdr-theme'
+
 export default function ThemeToggle() {
   const [dark, setDark] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme')
+    const saved = localStorage.getItem(STORAGE_KEY)
     if (saved === 'dark') {
       document.documentElement.classList.add('dark')
       setDark(true)
     } else {
-      // Ensure dark class is removed if not explicitly set
       document.documentElement.classList.remove('dark')
+      document.body.style.backgroundColor = ''
       setDark(false)
     }
   }, [])
@@ -21,11 +23,12 @@ export default function ThemeToggle() {
   function toggle() {
     if (dark) {
       document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
+      document.body.style.backgroundColor = ''
+      localStorage.setItem(STORAGE_KEY, 'light')
       setDark(false)
     } else {
       document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
+      localStorage.setItem(STORAGE_KEY, 'dark')
       setDark(true)
     }
   }
