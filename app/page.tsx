@@ -46,6 +46,12 @@ const testimonials = [
     name: 'Roberto E.',
     location: 'Registered Nurse, New York',
   },
+  {
+    quote:
+      'I\'ve lived with PTSD flashbacks for over a decade. After just two sessions with Open EMDR, the nightmares stopped. I finally feel present — calm, hopeful, and free from the grip of the past.',
+    name: 'Sarah M.',
+    location: 'Melbourne, Australia',
+  },
 ]
 
 const differences = [
@@ -415,16 +421,21 @@ export default function LandingPage() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-slate-200 dark:border-white/5 py-10 px-4 bg-slate-50 dark:bg-[#0f0f2a]">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 dark:text-slate-500 text-sm">
-          <div className="flex items-center gap-2">
-            <Brain className="w-5 h-5 text-purple-600" />
-            <span className="font-semibold text-slate-600 dark:text-slate-300">Open EMDR</span>
-          </div>
-          <p>© {new Date().getFullYear()} Open EMDR. All rights reserved.</p>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-slate-900 dark:hover:text-white transition-colors">Terms</a>
-            <Link href="/auth/login" className="hover:text-slate-900 dark:hover:text-white transition-colors">Log in</Link>
+        <div className="max-w-5xl mx-auto space-y-6">
+          <p className="text-slate-400 dark:text-slate-500 text-sm leading-relaxed text-center max-w-2xl mx-auto">
+            Open EMDR is an online self-guided Eye Movement Desensitization and Reprocessing (EMDR) tool that helps individuals process trauma, anxiety, PTSD, grief, and stress from the comfort of home. Using bilateral stimulation and evidence-based protocols, Open EMDR makes deep psychological healing accessible to everyone — no therapist appointments needed.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 dark:text-slate-500 text-sm pt-6 border-t border-slate-200 dark:border-white/5">
+            <div className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-purple-600" />
+              <span className="font-semibold text-slate-600 dark:text-slate-300">Open EMDR</span>
+            </div>
+            <p>© {new Date().getFullYear()} Open EMDR. All rights reserved.</p>
+            <div className="flex gap-4">
+              <Link href="/privacy" className="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-slate-900 dark:hover:text-white transition-colors">Terms</Link>
+              <Link href="/auth/login" className="hover:text-slate-900 dark:hover:text-white transition-colors">Log in</Link>
+            </div>
           </div>
         </div>
       </footer>

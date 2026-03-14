@@ -70,6 +70,7 @@ export default function EMDRTool() {
   const [currentSet, setCurrentSet] = useState(1)
   const [timeLeft, setTimeLeft] = useState(SET_DURATION)
   const [isPaused, setIsPaused] = useState(false)
+  const [dotStarted, setDotStarted] = useState(false)
 
   // Dot animation
   const [dotX, setDotX] = useState(0) // 0 = left, 1 = right
@@ -121,7 +122,7 @@ export default function EMDRTool() {
 
   // ── Dot animation ──────────────────────────────────────────────────────────
   useEffect(() => {
-    if (phase !== 'active' || isPaused) {
+    if (phase !== 'active' || isPaused || !dotStarted) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       return
     }
@@ -155,7 +156,7 @@ export default function EMDRTool() {
 
   // ── Countdown timer ────────────────────────────────────────────────────────
   useEffect(() => {
-    if (phase !== 'active' || isPaused) return
+    if (phase !== 'active' || isPaused || !dotStarted) return
     if (timeLeft <= 0) return
 
     const id = setTimeout(() => {
@@ -184,6 +185,7 @@ export default function EMDRTool() {
   }
 
   function beginActive() {
+    setDotStarted(false)
     setPhase('active')
   }
 
@@ -193,6 +195,7 @@ export default function EMDRTool() {
     setCurrentSet((s) => s + 1)
     setTimeLeft(SET_DURATION)
     setIsPaused(false)
+    setDotStarted(false)
     setPhase('active')
   }
 
@@ -401,19 +404,13 @@ export default function EMDRTool() {
   }
 
   if (phase === 'active') {
-    const dotSizePx = 52
+    const dotSizePx = 72
     const dotPercent = dotX * 100
 
     return (
-      <div className="flex flex-col items-center justify-between min-h-[calc(100vh-80px)] py-10 px-4">
-        <div className="text-center space-y-1">
-          <p className="text-purple-600 font-semibold text-sm dark:text-purple-400">
-            Set {currentSet} of {SETS_PER_SESSION}
-          </p>
-          <p className="text-slate-500 text-sm dark:text-white/50">Keep your head still · eyes only</p>
-        </div>
+      <div className="flex flex-col items-center min-h-[calc(100vh-80px)] py-8 px-4 gap-8">
 
-        {/* Visual instructions */}
+        {/* Visual instructions — top */}
         <div className="flex items-center justify-center gap-8 w-full max-w-lg">
           <div className="flex flex-col items-center gap-2">
             <div className="text-4xl">👁️</div>
@@ -431,14 +428,22 @@ export default function EMDRTool() {
           </div>
         </div>
 
-        {/* Dot track */}
-        <div className="w-full max-w-4xl">
+        {/* Set info */}
+        <div className="text-center space-y-1">
+          <p className="text-purple-600 font-semibold text-sm dark:text-purple-400">
+            Set {currentSet} of {SETS_PER_SESSION}
+          </p>
+          <p className="text-slate-500 text-sm dark:text-white/50">Keep your head still · eyes only</p>
+        </div>
+
+        {/* Dot track — front and center */}
+        <div className="w-full max-w-5xl flex-1 flex items-center">
           <div
-            className="relative w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden"
-            style={{ height: 100 }}
+            className="relative w-full bg-slate-100 dark:bg-white/5 rounded-3xl overflow-hidden"
+            style={{ height: 200 }}
           >
             {/* Track line */}
-            <div className="absolute inset-y-0 left-6 right-6 flex items-center">
+            <div className="absolute inset-y-0 left-8 right-8 flex items-center">
               <div className="w-full h-px bg-slate-200 dark:bg-white/10" />
             </div>
 
@@ -453,37 +458,51 @@ export default function EMDRTool() {
             >
               <div
                 className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-violet-600 shadow-lg animate-pulse-slow"
-                style={{ boxShadow: '0 0 30px rgba(124,58,237,0.8), 0 0 60px rgba(124,58,237,0.4)' }}
+                style={{ boxShadow: '0 0 40px rgba(124,58,237,0.9), 0 0 80px rgba(124,58,237,0.5)' }}
               />
             </div>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-4xl font-mono font-bold text-slate-700 dark:text-white/80">
-            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+        {/* Controls / Start button */}
+        {!dotStarted ? (
+          <div className="flex flex-col items-center gap-3 pb-4">
+            <button
+              onClick={() => setDotStarted(true)}
+              className="btn-primary flex items-center gap-2 px-10 py-4 text-base"
+            >
+              <Play className="w-5 h-5" /> I&apos;m Ready — Begin
+            </button>
+            <button onClick={resetAll} className="text-slate-400 hover:text-slate-600 text-sm transition-colors dark:text-white/30 dark:hover:text-white/60">
+              Back to setup
+            </button>
           </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4 pb-4">
+            <div className="text-4xl font-mono font-bold text-slate-700 dark:text-white/80">
+              {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+            </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => setIsPaused((p) => !p)}
-              className="btn-secondary flex items-center gap-2 px-6 py-3"
-            >
-              {isPaused ? <><Play className="w-4 h-4" /> Resume</> : <><Pause className="w-4 h-4" /> Pause</>}
-            </button>
-            <button
-              onClick={() => setSoundEnabled((v) => !v)}
-              className="btn-secondary flex items-center gap-2 px-4 py-3"
-              title={soundEnabled ? 'Mute sound' : 'Enable sound'}
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            </button>
-            <button onClick={resetAll} className="btn-secondary flex items-center gap-2 px-6 py-3">
-              <RotateCcw className="w-4 h-4" /> Stop
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsPaused((p) => !p)}
+                className="btn-secondary flex items-center gap-2 px-6 py-3"
+              >
+                {isPaused ? <><Play className="w-4 h-4" /> Resume</> : <><Pause className="w-4 h-4" /> Pause</>}
+              </button>
+              <button
+                onClick={() => setSoundEnabled((v) => !v)}
+                className="btn-secondary flex items-center gap-2 px-4 py-3"
+                title={soundEnabled ? 'Mute sound' : 'Enable sound'}
+              >
+                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </button>
+              <button onClick={resetAll} className="btn-secondary flex items-center gap-2 px-6 py-3">
+                <RotateCcw className="w-4 h-4" /> Stop
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     )
   }
