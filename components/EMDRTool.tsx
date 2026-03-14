@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Play, Pause, RotateCcw, CheckCircle, ChevronRight } from 'lucide-react'
+import { Play, Pause, RotateCcw, CheckCircle, ChevronRight, Volume2, VolumeX } from 'lucide-react'
 
-type Phase = 'prepare' | 'active' | 'rest' | 'rate' | 'complete'
+type Phase = 'prepare' | 'focus' | 'active' | 'rest' | 'rate' | 'complete'
 type Speed = 'slow' | 'medium' | 'fast'
 
 const SPEED_MS: Record<Speed, number> = {
@@ -59,6 +59,7 @@ export default function EMDRTool() {
   const [protocol, setProtocol] = useState(PROTOCOLS[0])
   const [target, setTarget] = useState('')
   const [speed, setSpeed] = useState<Speed>('medium')
+  const [soundEnabled, setSoundEnabled] = useState(true)
 
   // Ratings
   const [sudBefore, setSudBefore] = useState(5)
@@ -77,6 +78,47 @@ export default function EMDRTool() {
   const rafRef = useRef<number>()
   const lastTimeRef = useRef<number>()
 
+  // Audio
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const soundEnabledRef = useRef(true)
+
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled
+  }, [soundEnabled])
+
+  function playTone(side: 'left' | 'right') {
+    if (!soundEnabledRef.current) return
+    try {
+      if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
+        audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+      }
+      const ctx = audioCtxRef.current
+      if (ctx.state === 'suspended') ctx.resume()
+
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      const panner = ctx.createStereoPanner()
+
+      osc.connect(gain)
+      gain.connect(panner)
+      panner.connect(ctx.destination)
+
+      osc.frequency.value = 440
+      osc.type = 'sine'
+      panner.pan.value = side === 'left' ? -1 : 1
+
+      const now = ctx.currentTime
+      gain.gain.setValueAtTime(0, now)
+      gain.gain.linearRampToValueAtTime(0.25, now + 0.02)
+      gain.gain.linearRampToValueAtTime(0, now + 0.12)
+
+      osc.start(now)
+      osc.stop(now + 0.15)
+    } catch {
+      // AudioContext not available in this environment
+    }
+  }
+
   // ── Dot animation ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (phase !== 'active' || isPaused) {
@@ -91,9 +133,17 @@ export default function EMDRTool() {
       const elapsed = now - (lastTimeRef.current ?? now)
       lastTimeRef.current = now
 
+      const prevDir = dirRef.current
       posRef.current += (dirRef.current * elapsed) / speedMs
+
       if (posRef.current >= 1) { posRef.current = 1; dirRef.current = -1 }
       if (posRef.current <= 0) { posRef.current = 0; dirRef.current = 1 }
+
+      // Play tone when direction flips (dot reached an edge)
+      // dirRef === -1 → just hit right side; dirRef === 1 → just hit left side
+      if (dirRef.current !== prevDir) {
+        playTone(dirRef.current === -1 ? 'right' : 'left')
+      }
 
       setDotX(posRef.current)
       rafRef.current = requestAnimationFrame(animate)
@@ -130,6 +180,10 @@ export default function EMDRTool() {
     setCurrentSet(1)
     setTimeLeft(SET_DURATION)
     setIsPaused(false)
+    setPhase('focus')
+  }
+
+  function beginActive() {
     setPhase('active')
   }
 
@@ -223,6 +277,25 @@ export default function EMDRTool() {
           </div>
         </div>
 
+        {/* Step 5 — Bilateral sound */}
+        <div className="glass-card rounded-2xl p-6 space-y-3">
+          <p className="text-purple-600 text-xs font-semibold uppercase tracking-widest dark:text-purple-400">Step 5 — Bilateral sound</p>
+          <p className="text-slate-500 text-sm dark:text-white/50">
+            A soft tone alternates between left and right ears in sync with the dot. Use headphones for the full bilateral effect.
+          </p>
+          <button
+            onClick={() => setSoundEnabled((v) => !v)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${
+              soundEnabled
+                ? 'bg-purple-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10'
+            }`}
+          >
+            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            {soundEnabled ? 'Sound on' : 'Sound off'}
+          </button>
+        </div>
+
         {/* Instructions */}
         <div className="bg-purple-50 border border-purple-200 rounded-2xl p-5 space-y-2 text-sm text-slate-600 dark:bg-purple-500/10 dark:border-purple-500/20 dark:text-white/70">
           <p className="font-semibold text-slate-900 dark:text-white">Before you begin:</p>
@@ -241,6 +314,88 @@ export default function EMDRTool() {
           Begin EMDR Session
           <ChevronRight className="w-5 h-5" />
         </button>
+      </div>
+    )
+  }
+
+  if (phase === 'focus') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-10">
+        <div className="max-w-lg w-full space-y-6">
+          <div className="text-center">
+            <p className="text-purple-600 font-semibold text-sm uppercase tracking-widest mb-2 dark:text-purple-400">
+              Before you begin
+            </p>
+            <h2 className="text-2xl font-bold">Ground Yourself</h2>
+            <p className="text-slate-500 text-sm mt-2 dark:text-white/50">
+              Take a moment to connect with your target before the eye movements start.
+            </p>
+          </div>
+
+          {target && (
+            <div className="glass-card rounded-2xl p-5 text-center">
+              <p className="text-xs text-slate-400 uppercase tracking-widest mb-2 dark:text-white/40">Your target</p>
+              <p className="text-slate-700 text-sm italic dark:text-white/80">"{target}"</p>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {[
+              {
+                num: '1',
+                title: 'Bring the memory to mind',
+                body: 'Let the image or memory surface naturally. You don\'t need to analyze it — just notice it.',
+              },
+              {
+                num: '2',
+                title: 'Find the negative belief',
+                body: 'What does this say about you? (e.g., "I am helpless," "I am not safe," "It was my fault")',
+              },
+              {
+                num: '3',
+                title: 'Scan your body',
+                body: 'Where do you feel this right now? Chest, stomach, throat? Just notice — don\'t try to change it.',
+              },
+              {
+                num: '4',
+                title: 'Hold it all lightly',
+                body: 'Keep the memory, belief, and body sensation gently in mind as the dot begins to move.',
+              },
+            ].map(({ num, title, body }) => (
+              <div key={num} className="flex gap-4 glass-card rounded-2xl p-5">
+                <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm flex-shrink-0 dark:bg-purple-500/20 dark:text-purple-300">
+                  {num}
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-slate-900 dark:text-white">{title}</p>
+                  <p className="text-slate-500 text-sm mt-0.5 dark:text-white/50">{body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {soundEnabled && (
+            <div className="flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-white/30">
+              <Volume2 className="w-3.5 h-3.5" />
+              Bilateral sound enabled — headphones recommended
+            </div>
+          )}
+
+          <button
+            onClick={beginActive}
+            className="btn-primary w-full flex items-center justify-center gap-2 text-base"
+          >
+            Start Eye Movements
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={resetAll}
+            className="w-full text-center text-slate-400 hover:text-slate-600 text-sm transition-colors dark:text-white/30 dark:hover:text-white/60"
+          >
+            Back to setup
+          </button>
+        </div>
       </div>
     )
   }
@@ -298,6 +453,13 @@ export default function EMDRTool() {
               className="btn-secondary flex items-center gap-2 px-6 py-3"
             >
               {isPaused ? <><Play className="w-4 h-4" /> Resume</> : <><Pause className="w-4 h-4" /> Pause</>}
+            </button>
+            <button
+              onClick={() => setSoundEnabled((v) => !v)}
+              className="btn-secondary flex items-center gap-2 px-4 py-3"
+              title={soundEnabled ? 'Mute sound' : 'Enable sound'}
+            >
+              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
             <button onClick={resetAll} className="btn-secondary flex items-center gap-2 px-6 py-3">
               <RotateCcw className="w-4 h-4" /> Stop
