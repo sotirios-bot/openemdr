@@ -410,7 +410,25 @@ export default function EMDRTool() {
           <p className="text-purple-600 font-semibold text-sm dark:text-purple-400">
             Set {currentSet} of {SETS_PER_SESSION}
           </p>
-          <p className="text-slate-500 text-sm dark:text-white/50">Follow the dot with your eyes only — keep your head still</p>
+          <p className="text-slate-500 text-sm dark:text-white/50">Keep your head still · eyes only</p>
+        </div>
+
+        {/* Visual instructions */}
+        <div className="flex items-center justify-center gap-8 w-full max-w-lg">
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-4xl">👁️</div>
+            <p className="text-slate-600 dark:text-white/70 text-sm font-medium text-center">Follow<br/>the dot</p>
+          </div>
+          <div className="w-px h-12 bg-slate-200 dark:bg-white/10" />
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-4xl">🧠</div>
+            <p className="text-slate-600 dark:text-white/70 text-sm font-medium text-center">Notice what<br/>comes up</p>
+          </div>
+          <div className="w-px h-12 bg-slate-200 dark:bg-white/10" />
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-4xl">😮‍💨</div>
+            <p className="text-slate-600 dark:text-white/70 text-sm font-medium text-center">Just let<br/>it pass</p>
+          </div>
         </div>
 
         {/* Dot track */}
