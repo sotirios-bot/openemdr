@@ -152,7 +152,7 @@ export default function EMDRTool() {
 
     rafRef.current = requestAnimationFrame(animate)
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
-  }, [phase, speed, isPaused])
+  }, [phase, speed, isPaused, dotStarted])
 
   // ── Countdown timer ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -172,7 +172,7 @@ export default function EMDRTool() {
     }, 1000)
 
     return () => clearTimeout(id)
-  }, [phase, timeLeft, isPaused, currentSet])
+  }, [phase, timeLeft, isPaused, currentSet, dotStarted])
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function startSession() {
