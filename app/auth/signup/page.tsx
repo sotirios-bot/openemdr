@@ -53,7 +53,7 @@ export default function SignupPage() {
 
   if (done) {
     return (
-      <div className="hero-gradient min-h-screen flex items-center justify-center px-4">
+      <div className="dark hero-gradient min-h-screen flex items-center justify-center px-4">
         <div className="glass-card rounded-2xl p-10 max-w-md w-full text-center space-y-4">
           <CheckCircle className="w-14 h-14 text-green-400 mx-auto" />
           <h2 className="text-2xl font-bold">Check your email</h2>
@@ -67,7 +67,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="hero-gradient min-h-screen flex items-center justify-center px-4">
+    <div className="dark hero-gradient min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
