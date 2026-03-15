@@ -168,7 +168,7 @@ export default function LandingPage() {
             <Link href="/auth/login" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-medium transition-colors">
               Log in
             </Link>
-            <Link href="/preview" className="bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+            <Link href="/auth/signup" className="bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
               Start Now
             </Link>
           </div>

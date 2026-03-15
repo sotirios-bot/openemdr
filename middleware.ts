@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
 
   // If Supabase is not configured, allow access to public routes only
   if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
-    if (pathname.startsWith('/dashboard') || pathname.startsWith('/checkout')) {
+    if (pathname.startsWith('/dashboard') || pathname.startsWith('/checkout') || pathname.startsWith('/preview')) {
       return NextResponse.redirect(new URL('/auth/login', request.url))
     }
     return response
@@ -58,5 +58,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/checkout/:path*', '/auth/login', '/auth/signup'],
+  matcher: ['/dashboard/:path*', '/checkout/:path*', '/preview/:path*', '/preview', '/auth/login', '/auth/signup'],
 }
