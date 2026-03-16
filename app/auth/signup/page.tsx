@@ -3,15 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Brain, Eye, EyeOff, ArrowRight, CheckCircle, Zap, Shield, Clock, Infinity } from 'lucide-react'
+import { Brain, Eye, EyeOff, CheckCircle, ArrowRight, Lock, ShieldCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-
-const BENEFITS = [
-  { icon: Infinity, text: 'Unlimited sessions — no caps, no expiry' },
-  { icon: Shield, text: 'All trauma & anxiety protocols included' },
-  { icon: Clock, text: 'Track your healing progress over time' },
-  { icon: Zap, text: 'Start in under 2 minutes, from anywhere' },
-]
 
 export default function SignupPage() {
   const router = useRouter()
@@ -47,26 +40,27 @@ export default function SignupPage() {
     }
 
     if (data.session) {
-      // Email confirmation is disabled — user is signed in immediately
       router.push('/checkout')
       router.refresh()
       return
     }
 
-    // Email confirmation is required
     setDone(true)
     setLoading(false)
   }
 
   if (done) {
     return (
-      <div className="dark hero-gradient min-h-screen flex items-center justify-center px-4">
-        <div className="glass-card rounded-2xl p-10 max-w-md w-full text-center space-y-4">
-          <CheckCircle className="w-14 h-14 text-green-400 mx-auto" />
-          <h2 className="text-2xl font-bold text-white">Check your email</h2>
-          <p className="text-white/60">
-            We sent a confirmation link to <strong className="text-white">{email}</strong>.
-            Click it to activate your account and complete your purchase.
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-10 max-w-md w-full text-center space-y-4">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle className="w-8 h-8 text-green-500" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900">Check your email</h2>
+          <p className="text-slate-500">
+            We sent a confirmation link to{' '}
+            <strong className="text-slate-700">{email}</strong>.
+            Click it to verify your account and continue to payment.
           </p>
         </div>
       </div>
@@ -74,119 +68,179 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="dark hero-gradient min-h-screen flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-4xl flex flex-col lg:flex-row gap-10 items-center">
+    <div className="min-h-screen bg-slate-50">
 
-        {/* Left — marketing */}
-        <div className="flex-1 text-center lg:text-left space-y-6">
-          <Link href="/" className="inline-flex items-center gap-2 text-white font-bold text-xl">
-            <Brain className="w-7 h-7 text-purple-400" />
-            Open EMDR
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <Brain className="w-7 h-7 text-purple-600" />
+            <span className="font-bold text-lg text-slate-900">Open EMDR</span>
           </Link>
-
-          <div>
-            <h1 className="text-4xl font-black text-white leading-tight mb-3">
-              Unlimited healing.<br />
-              <span className="gradient-text">One payment. Forever.</span>
-            </h1>
-            <p className="text-white/60 text-lg leading-relaxed">
-              Science-backed EMDR therapy from your home. No subscriptions,
-              no session limits — just deep, lasting relief.
-            </p>
-          </div>
-
-          <ul className="space-y-3">
-            {BENEFITS.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
-                  <Icon className="w-4 h-4 text-purple-400" />
-                </div>
-                <span className="text-sm font-medium">{text}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-5 py-2.5 text-green-400 text-sm font-semibold">
-            <CheckCircle className="w-4 h-4 shrink-0" />
-            30-day money-back guarantee
-          </div>
-        </div>
-
-        {/* Right — signup form */}
-        <div className="w-full max-w-sm">
-          <div className="glass-card rounded-2xl p-8 space-y-4">
-            <div className="text-center mb-2">
-              <h2 className="text-xl font-bold text-white">Create your account</h2>
-              <p className="text-white/40 text-sm mt-1">Then complete your one-time purchase</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm">
-                  {error}
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-1.5">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@email.com"
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-1.5">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Min. 8 characters"
-                    className="input-field pr-12"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {loading ? 'Creating account…' : (
-                  <>Continue to Payment <ArrowRight className="w-4 h-4" /></>
-                )}
-              </button>
-
-              <p className="text-center text-white/30 text-xs">
-                By signing up you agree to our{' '}
-                <Link href="/terms" className="underline hover:text-white/50">Terms</Link>
-                {' '}and{' '}
-                <Link href="/privacy" className="underline hover:text-white/50">Privacy Policy</Link>.
-              </p>
-            </form>
-          </div>
-
-          <p className="text-center text-white/40 text-sm mt-4">
+          <p className="text-sm text-slate-400">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-medium">
+            <Link href="/auth/login" className="text-purple-600 font-medium hover:text-purple-700">
               Log in
             </Link>
           </p>
         </div>
+      </header>
 
+      {/* Step indicator */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3 max-w-sm">
+            {/* Step 1 */}
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                1
+              </div>
+              <span className="text-sm font-semibold text-slate-900">Create account</span>
+            </div>
+            {/* Connector */}
+            <div className="flex-1 h-px bg-slate-200 max-w-[60px]" />
+            {/* Step 2 */}
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xs font-bold shrink-0">
+                2
+              </div>
+              <span className="text-sm font-medium text-slate-400">Complete purchase</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+
+          {/* Left — value prop */}
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-3xl font-black text-slate-900 leading-tight mb-3">
+                Start your healing journey today
+              </h1>
+              <p className="text-slate-500 text-lg leading-relaxed">
+                Create your free account, then complete your one-time purchase to unlock
+                unlimited EMDR sessions — forever.
+              </p>
+            </div>
+
+            <ul className="space-y-4">
+              {[
+                { title: 'Unlimited sessions', desc: 'Use it as often as you need — daily, weekly, no limits ever' },
+                { title: 'All protocols included', desc: 'Trauma, PTSD, grief, anxiety, phobias and more' },
+                { title: 'Track your progress', desc: 'Before/after distress scoring with the SUD scale' },
+                { title: 'Instant access', desc: 'Start your first session in minutes after payment' },
+              ].map(({ title, desc }) => (
+                <li key={title} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-slate-900 font-semibold text-sm">{title}</p>
+                    <p className="text-slate-500 text-sm">{desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="bg-purple-50 border border-purple-100 rounded-xl p-4 flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-slate-900 font-semibold text-sm">30-day money-back guarantee</p>
+                <p className="text-slate-500 text-sm">
+                  If you're not satisfied, email us within 30 days for a full refund. No questions asked.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right — form */}
+          <div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-1">Create your account</h2>
+              <p className="text-slate-400 text-sm mb-6">Step 1 of 2 — free, takes 30 seconds</p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm transition"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Minimum 8 characters"
+                      className="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm transition"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition text-sm"
+                >
+                  {loading ? (
+                    'Creating account…'
+                  ) : (
+                    <>
+                      Continue to Payment
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center justify-center gap-1.5 text-slate-400 text-xs pt-1">
+                  <Lock className="w-3 h-3" />
+                  <span>
+                    By continuing you agree to our{' '}
+                    <Link href="/terms" className="underline hover:text-slate-600">Terms</Link>
+                    {' '}and{' '}
+                    <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link>
+                  </span>
+                </div>
+              </form>
+            </div>
+
+            {/* Trust strip */}
+            <div className="mt-4 flex items-center justify-center gap-6 text-xs text-slate-400">
+              <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> No credit card until step 2</span>
+              <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> Secured by Stripe</span>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   )
