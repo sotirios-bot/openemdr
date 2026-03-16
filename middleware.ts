@@ -50,7 +50,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged-in users away from auth pages
-  if (user && (pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup'))) {
+  // Send them to /checkout (not /dashboard) so unpaid users land on the payment step
+  // The dashboard itself redirects paid users, and checkout handles unpaid users
+  if (user && pathname.startsWith('/auth/signup')) {
+    return NextResponse.redirect(new URL('/checkout', request.url))
+  }
+  if (user && pathname.startsWith('/auth/login')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

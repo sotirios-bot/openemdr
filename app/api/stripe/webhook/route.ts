@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import type Stripe from 'stripe'
 
 export async function POST(request: Request) {
@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     const userId = session.metadata?.user_id
 
     if (userId && session.payment_status === 'paid') {
-      const supabase = createClient()
+      // Use admin client — webhook has no cookies/session, so we need service role to bypass RLS
+      const supabase = createAdminClient()
       await supabase
         .from('profiles')
         .update({

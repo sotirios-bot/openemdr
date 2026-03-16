@@ -8,8 +8,13 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
     if (!error) {
+      // Password recovery sessions should always land on the reset page
+      if (data.session?.user?.aud === 'authenticated' && next === '/auth/reset-password') {
+        return NextResponse.redirect(new URL('/auth/reset-password', request.url))
+      }
       return NextResponse.redirect(new URL(next, request.url))
     }
   }
